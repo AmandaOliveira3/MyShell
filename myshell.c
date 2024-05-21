@@ -134,8 +134,6 @@ int main() {
         perror("getcwd");
         exit(EXIT_FAILURE);
     }
-    
-    //replace_home_directory(cwd);
 	
 	while (1) {
     display_prompt();
@@ -146,16 +144,22 @@ int main() {
         }
     input[strcspn(input, "\n")] = 0; // Remove a nova linha do final da entrada
 
-	 if (strcmp(input, "exit") == 0) {
+	 if (strcmp(input, "exit") == 0) { // Verifica se o comando digitado foi exit
             break;
      }
      
-     
-      if (strncmp(input, "cd", 2) == 0) {
+      if (strncmp(input, "cd", 2) == 0) { // se o comando digitado começa com cd
             char *path = input + 3;
             if (path[0] == '\0') {
                 path = getenv("HOME");
             }
+            if (path == NULL || strcmp(path, "~") == 0) {
+		        path = getenv("HOME");
+		        if (path == NULL) {
+		            fprintf(stderr, "cd error: HOME variable not set\n");
+		            break;
+		        }
+    		}
             if (!path) {
                 fprintf(stderr, "cd error: HOME variable not set\n");
                 continue;
